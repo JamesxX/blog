@@ -2,7 +2,7 @@
 title: Homepage
 ---
 test
-{{ site }}
+{{ site.posts }}
 <ul>
   {% for post in site.posts %}
     <li>
