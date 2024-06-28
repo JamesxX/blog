@@ -7,3 +7,7 @@ description: Discussions of software stuff, (because I want to try blogging out)
 gems:
   - jekyll-sitemap # Create a sitemap using the official Jekyll sitemap gem
   - jekyll-feed # Create an Atom feed using the official Jekyll feed gem
+  
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
