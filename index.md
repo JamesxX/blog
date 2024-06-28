@@ -1,7 +1,7 @@
 ---
-title: Welcome to my blog
+title: Homepage
 ---
-
+test
 <ul>
   {% for post in site.posts %}
     <li>
