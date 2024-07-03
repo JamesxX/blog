@@ -1,5 +1,5 @@
 
-#import "sparkline.typ"
+#import "../packages/sparklines/lib.typ" as sparkline
 #import "data.typ"
 
 #set par(justify: true)
@@ -14,7 +14,7 @@
 #par-wrap[
   Owing to the good $#`ETH`->#`GBP`$ 
   #sparkline.make(
-    data.converted.filter(it=>it.first()>300), 
+    data.series("Adj Close").filter(it=>it.first()>300), 
     width: 2.5em,  
     height: 1.2em
   )
@@ -33,7 +33,7 @@
 #par-wrap[
   After the event
   #sparkline.make(
-    data.converted.filter(it=>(it.first()>290 and it.first() < 320 )), 
+    data.series("Adj Close").filter(it=>(it.first()>290 and it.first() < 320)), 
     width: 1.7em,  
     height: 1.2em,
     draw: (
@@ -42,3 +42,31 @@
     )
   ) the exchange rate 
 ]
+
+#import "../packages/booktabs/lib.typ" as booktabs
+
+#let column(key, display, width: 1em) = (:
+  key: "High",
+  display: sparkline.make(
+    width: width,
+    data.series(key)
+  ) + display,
+  width: 1fr,
+  align: right,
+)
+
+#booktabs.rigor.make(
+  columns: (
+    (
+      key: "Date-Display",
+      display: [Date],
+      gutter: 1em
+    ),
+    column("Open", width: 2.3em)[Open],
+    column("High", width: 2.3em)[High],
+    column("Low", width: 2.6em)[Low],
+    column("Close", width: 2.1em)[Close],
+    column("Volume")[Volume]
+  ),
+  data: data.converted
+)

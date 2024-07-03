@@ -166,3 +166,49 @@ We now have an input argument `draw` that is an array of draw commands, which ta
 ```
 
 ![Expression]({{ "/assets/2024-07-XX-sparklines/customize.png" | relative_url }})  
+
+Using a couple helper functions along the way, they are easy enough to include in table headings: 
+
+```
+#let converted = converted.map((it)=>(:
+  ..it,
+  Date-Display: it.Date.display()
+))
+
+#let series(key) = converted.map(
+  (it) => (
+    it.Date.ordinal() + (it.Date.year() - 2023) * 365,
+    float(it.at(key))
+  )
+)
+
+#import "../packages/booktabs/lib.typ" as booktabs
+
+#let column(key, display, width: 1em) = (:
+  key: "High",
+  display: sparkline.make(
+    width: width,
+    data.series(key)
+  ) + display,
+  width: 1fr,
+  align: right,
+)
+
+#booktabs.rigor.make(
+  columns: (
+    (
+      key: "Date-Display",
+      display: [Date],
+      gutter: 1em
+    ),
+    column("Open", width: 2.3em)[Open],
+    column("High", width: 2.3em)[High],
+    column("Low", width: 2.6em)[Low],
+    column("Close", width: 2.1em)[Close],
+    column("Volume")[Volume]
+  ),
+  data: data.converted
+)
+```
+
+![Expression]({{ "/assets/2024-07-XX-sparklines/tables.png" | relative_url }}) 
