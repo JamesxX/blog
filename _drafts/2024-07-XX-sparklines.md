@@ -29,4 +29,13 @@ datetime(
 ```
 
 = Text sized plots
+One of the distinguishing features of sparklines is that when they are in the body of a text, they do not catch the eye more than is absolutely necessary. They don't have a luminance that is darker than the text, they are sized in proportion to the glyphs that surround them, and do not affect the line spacing. Now that we've set our goals, let's get started.
 
+The lowest hanging fruit is that, no matter how they are encoded in the source file, they have a space width on either side. This can be achieved by nesting space symbols within weak 0em horizontal spacing, like so
+
+```
+h(0em, weak: true) + sym.space + box({
+  
+}) + sym.space + h(0em, weak: true)
+
+```
