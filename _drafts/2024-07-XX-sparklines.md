@@ -9,3 +9,24 @@ For this reason, some journals even place a limit on the number of tables or fig
 This is where sparklines make their entrance. For quickly graphically representing a subset or feature of previously presented data, a text-sized plot without axes is included in the text.
 
 ![Expression]({{ "/assets/2024-07-XX-sparklines/header.png" | relative_url }})  
+
+For the purposes of illustration, I'm using `ETH` to `GBP` exchange rates to simulate actual data. The only matter of note was that when important the data from the CSV to Typst, and owing to the lack of named capture groups, the code that casts YYYY-MM-DD to date is atrocious.
+
+```
+datetime(
+    ..("year", "month", "day").zip(
+        it.Date.matches(
+            regex("(\d{4})-(\d{2})-(\d{2})")
+        ).first().captures
+    ).fold(
+        (:), 
+        (acc, it) => (
+            ..acc, 
+            (it.first()): int(it.last())
+        )
+    )
+)
+```
+
+= Text sized plots
+
