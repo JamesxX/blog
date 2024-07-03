@@ -4,12 +4,12 @@
   ..data
 )
 
-#let highlight-start-end-comparative(scale:1) = (data, (x-min, x-max), (y-min, y-max)) => {
-  let ((first-x, first-y), (last-x, last-y)) = (data.first(), data.last())
-  let colors = (red, green)
-  if (first-y > last-y){colors = colors.reverse()}
-  cetz.draw.mark(data.at(1), data.at(0), symbol: "o", scale: scale, transform-shape: false)
-  // cetz.draw.mark((last-x, last-y))
+#let vline(x, ..style) = (data, (x-min, x-max), (y-min, y-max)) => {
+  cetz.draw.line(
+    (x, y-min),
+    (x, y-max),
+    ..style
+  )
 }
 
 #let make(
@@ -19,7 +19,6 @@
   style: (stroke: 0.4pt),
   draw: (
     line,
-    highlight-start-end-comparative()
   )
 ) = h(0em, weak: true) + sym.space + box({
   

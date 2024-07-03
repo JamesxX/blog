@@ -142,5 +142,27 @@ We've managed to make a simple text sized plot of a line, but that won't suit ev
 }) + sym.space + h(0em, weak: true)
 ```
 
-We now have an input argument `draw` that is an array of draw commands, which take positional arguments `data` and min-max tuples for the x-axis and y-axis respectively. Now if someone wants something non-standard, they have the means to create it and specify it (or several).
+We now have an input argument `draw` that is an array of draw commands, which take positional arguments `data` and min-max tuples for the x-axis and y-axis respectively. Now if someone wants something non-standard, they have the means to create it and specify it (or several). I've made a quick generator function for a draw command that does a vertical line over the whole y-domain with a given style:
 
+```typ
+// The return type is function!
+#let vline(x, ..style) = (data, (x-min, x-max), (y-min, y-max)) => {
+  cetz.draw.line(
+    (x, y-min),
+    (x, y-max),
+    ..style
+  )
+}
+
+#sparkline.make(
+  data.converted.filter(it=>(it.first()>290 and it.first() < 320 )), 
+  width: 1.7em,  
+  height: 1.2em,
+  draw: (
+    sparkline.line,
+    vline(313, stroke: (thickness: 0.4pt, paint: red))
+  )
+)
+```
+
+![Expression]({{ "/assets/2024-07-XX-sparklines/customize.png" | relative_url }})  
