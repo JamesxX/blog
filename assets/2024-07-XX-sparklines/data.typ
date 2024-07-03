@@ -19,12 +19,13 @@
 
 #let converted = converted.map((it)=>(:
   ..it,
+  Day: it.Date.ordinal() + (it.Date.year() - 2023) * 365,
   Date-Display: it.Date.display()
 ))
 
 #let series(key) = converted.map(
   (it) => (
-    it.Date.ordinal() + (it.Date.year() - 2023) * 365,
+    it.Day,
     float(it.at(key))
   )
 )

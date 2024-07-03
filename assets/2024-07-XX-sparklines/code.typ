@@ -68,5 +68,5 @@
     column("Close", width: 2.1em)[Close],
     column("Volume")[Volume]
   ),
-  data: data.converted
+  data: data.converted.filter((it)=>{it.Day < 210})
 )

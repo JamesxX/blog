@@ -12,7 +12,7 @@
         key, 
         inherit: inherit, 
         default: {
-        if inherit {child.at(key, default: default)} else {default}
+          if inherit {child.at(key, default: default)} else {default}
         }
       )
       

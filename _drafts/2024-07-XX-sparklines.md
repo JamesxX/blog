@@ -28,7 +28,7 @@ datetime(
 )
 ```
 
-= Text sized plots
+# Text sized plots
 One of the distinguishing features of sparklines is that when they are in the body of a text, they do not catch the eye more than is absolutely necessary. They don't have a luminance that is darker than the text, they are sized in proportion to the glyphs that surround them, and do not affect the line spacing. Now that we've set our goals, let's get started.
 
 The lowest hanging fruit is that, no matter how they are encoded in the source file, they have a space width on either side. This can be achieved by nesting space symbols within weak 0em horizontal spacing, like so
@@ -102,7 +102,7 @@ We've handed almost complete control of the width and the height over to the cal
 }) + sym.space + h(0em, weak: true)
 ```
 
-= One size doesn't fit all
+# One size doesn't fit all
 We've managed to make a simple text sized plot of a line, but that won't suit every instance where short-hand graphical representations would be beneficial. Do we want to put to coloured marks on the ends of the line? Maybe we want a bar chart instead? Should the area below be shaded? We can make our code more general by shuffling some code around
 
 ```
@@ -170,11 +170,13 @@ We now have an input argument `draw` that is an array of draw commands, which ta
 Using a couple helper functions along the way, they are easy enough to include in table headings: 
 
 ```
+// Our table likes content instead of datetime for rendering
 #let converted = converted.map((it)=>(:
   ..it,
   Date-Display: it.Date.display()
 ))
 
+// Simple (x,y) map utility function
 #let series(key) = converted.map(
   (it) => (
     it.Date.ordinal() + (it.Date.year() - 2023) * 365,
@@ -184,6 +186,7 @@ Using a couple helper functions along the way, they are easy enough to include i
 
 #import "../packages/booktabs/lib.typ" as booktabs
 
+// Make defining columns a bit easier when we know what we want
 #let column(key, display, width: 1em) = (:
   key: "High",
   display: sparkline.make(
@@ -194,6 +197,7 @@ Using a couple helper functions along the way, they are easy enough to include i
   align: right,
 )
 
+// Last week's project makes an appearance!
 #booktabs.rigor.make(
   columns: (
     (
@@ -212,3 +216,8 @@ Using a couple helper functions along the way, they are easy enough to include i
 ```
 
 ![Expression]({{ "/assets/2024-07-XX-sparklines/tables.png" | relative_url }}) 
+
+# Closing thoughts
+Playing around with sparklines has taught me a great deal about imagining "average use cases" and how best to implement them. The other thing it taught me is that my booktabs code from the last blog post suffers horribly for large tables, so it will probably get revisited.
+
+One of the design limitations I ran into was that from the get-go, we assumed that we wanted to display (x,y) data, which isn't always the case. Marks on the plots get distorted due to the scaling transformations we applied, even when `transform-shape` is set to `false`, but I understand that this should be fixed in the next cetz release.
