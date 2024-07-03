@@ -8,7 +8,7 @@ For this reason, some journals even place a limit on the number of tables or fig
 
 This is where sparklines make their entrance. For quickly graphically representing a subset or feature of previously presented data, a text-sized plot without axes is included in the text.
 
-![Expression]({{ "/assets/2024-07-XX-sparklines/header.png" | relative_url }})  
+![Expression]({{ "/assets/2024-07-03-sparklines/header.png" | relative_url }})  
 
 For the purposes of illustration, I'm using `ETH` to `GBP` exchange rates to simulate actual data. The only matter of note was that when importing the data from the CSV to Typst, and owing to the lack of named capture groups, the code that casts YYYY-MM-DD to date is atrocious.
 
@@ -165,7 +165,7 @@ We now have an input argument `draw` that is an array of draw commands, which ta
 )
 ```
 
-![Expression]({{ "/assets/2024-07-XX-sparklines/customize.png" | relative_url }})  
+![Expression]({{ "/assets/2024-07-03-sparklines/customize.png" | relative_url }})  
 
 Using a couple helper functions along the way, they are easy enough to include in table headings: 
 
@@ -215,9 +215,11 @@ Using a couple helper functions along the way, they are easy enough to include i
 )
 ```
 
-![Expression]({{ "/assets/2024-07-XX-sparklines/tables.png" | relative_url }}) 
+![Expression]({{ "/assets/2024-07-03-sparklines/tables.png" | relative_url }}) 
 
 # Closing thoughts
 Playing around with sparklines has taught me a great deal about imagining "average use cases" and how best to implement them. The other thing it taught me is that my booktabs code from the last blog post suffers horribly for large tables, so it will probably get revisited.
 
 One of the design limitations I ran into was that from the get-go, we assumed that we wanted to display (x,y) data, which isn't always the case. Marks on the plots get distorted due to the scaling transformations we applied, even when `transform-shape` is set to `false`, but I understand that this should be fixed in the next cetz release.
+
+There does seem to be an issue for the "Volume" column sparkline, and I haven't managed to work out what it is.

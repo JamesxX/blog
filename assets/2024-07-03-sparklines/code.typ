@@ -46,7 +46,7 @@
 #import "../packages/booktabs/lib.typ" as booktabs
 
 #let column(key, display, width: 1em) = (:
-  key: "High",
+  key: key,
   display: sparkline.make(
     width: width,
     data.series(key)
