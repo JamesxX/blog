@@ -39,3 +39,32 @@ h(0em, weak: true) + sym.space + box({
 }) + sym.space + h(0em, weak: true)
 
 ```
+
+To get our plots text-sized, I'm going to scale the x and y according to the spread of the data and the given `width` and `height` lengths
+```
+#let sparkline(
+  data, 
+  height: 1em,
+  width: 1em, 
+) = h(0em, weak: true) + sym.space + box({
+  
+  // Calculate the spread of data
+  let x-min = calc.min(..data.map(it=>it.first()))
+  let x-max = calc.max(..data.map(it=>it.first()))
+
+  let y-min = calc.min(..data.map(it=>it.last()))
+  let y-max = calc.max(..data.map(it=>it.last()))
+
+  // Setup a canvas that scales with text size
+  cetz.canvas(
+    length: 1em,
+    {
+      cetz.draw.scale(
+        x: width / ((x-max - x-min ) * 1em),  // Normalize data to between 0 and 1
+        y: height / (2*(y-max - y-min) * 1em)
+      )
+      cetz.draw.line(..data)
+    }
+  )
+}) + sym.space + h(0em, weak: true)
+```
