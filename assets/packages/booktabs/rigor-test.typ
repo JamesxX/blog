@@ -10,87 +10,74 @@
 
 #let data = (
   (
-    date: [00/11/1234],
+    date: datetime.today(),
     particulars: lorem(05),
     ledger: [JRS123] + booktabs.footnotes.make[Hello World],
     amount: (unit: $100$, decimal: $00$),
     total: (unit: $99$, decimal: $00$),
   ),
-)*7 +(
-  (
-    date: [01/09/1994],
-    particulars: [Just buying something extra this week before I run out of stuff],
-    ledger: [JRS123] + booktabs.footnotes.make[Special reference because it has a label],
-    amount: (unit: $12,222$, decimal: $99$),
-    total: (unit: $99$, decimal: $00$),
-  ), 
-)
+)*7 
 
 
 #let example = (
   (
     key: "date",
-    display: [Date],
-    // fill: bg-fill-1,
-    // align: left,
-    width: 5em,
+    header: align(left)[Date],
+    display: (it)=>it.display(auto),
+    fill: bg-fill-1,
+    align: start,
     gutter: 0.5em,
   ),
   (
     key: "particulars",
-    display: text(tracking: 5pt)[Particulars],
+    header: text(tracking: 5pt)[Particulars],
     width: 1fr,
     gutter: 0.5em,
   ),
   (
     key: "ledger",
-    display: [Ledger],
-    // fill: bg-fill-2,
+    header: [Ledger],
+    fill: bg-fill-2,
     width: 2cm,
-    // align: center,
     gutter: 0.5em,
   ),
   (
-    key: "amount", 
-    display: align(center)[Amount],
-    // fill: bg-fill-1,
+    header: align(center)[Amount],
+    fill: bg-fill-1,
     gutter: 0.5em,
     hline: arguments(stroke: booktabs.lightrule),
     children: (
       (
-        key: "unit", 
-        display: align(left)[£], 
+        key: "amount.unit", 
+        header: align(left)[£], 
         width: 5em, 
         align: right,
         vline: arguments(stroke: booktabs.lightrule),
         gutter: 0em,
       ),
       (
-        key: "decimal",
-        display: align(right, text(number-type: "old-style")[.00]), 
-        width: 2em,
-        // align: left
+        key: "amount.decimal",
+        header: align(right, text(number-type: "old-style")[.00]), 
+        align: left
       ),
     )
   ),
   (
-    key: "total", 
-    display: align(center)[Total],
+    header: align(center)[Total],
     gutter: 0.5em,
     hline: arguments(stroke: booktabs.lightrule),
     children: (
       (
-        key: "unit", 
-        display: align(left)[£], 
+        key: "total.unit", 
+        header: align(left)[£], 
         width: 5em, 
         align: right,
         vline: arguments(stroke: booktabs.lightrule),
         gutter: 0em,
       ),
       (
-        key: "decimal",
-        display: align(right, text(number-type: "old-style")[.00]), 
-        width: 2em,
+        key: "total.decimal",
+        header: align(right, text(number-type: "old-style")[.00]), 
         align: left
       ),
     )
@@ -100,5 +87,5 @@
 #set page(height: auto, margin: 1em)
 #booktabs.rigor.make(columns: example, 
   data: data, 
-  // notes: booktabs.footnotes.display-list
+  notes: booktabs.footnotes.display-list
 )

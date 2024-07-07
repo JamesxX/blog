@@ -47,7 +47,7 @@
 
 #let column(key, display, width: 1em) = (:
   key: key,
-  display: sparkline.make(
+  header: sparkline.make(
     width: width,
     data.series(key)
   ) + display,
@@ -59,7 +59,7 @@
   columns: (
     (
       key: "Date-Display",
-      display: [Date],
+      header: [Date],
       gutter: 1em
     ),
     column("Open", width: 2.3em)[Open],
@@ -68,5 +68,6 @@
     column("Close", width: 2.1em)[Close],
     column("Volume")[Volume]
   ),
-  data: data.converted.filter((it)=>{it.Day < 210})
+  data: data.converted
 )
+

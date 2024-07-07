@@ -1,27 +1,28 @@
 #import "style.typ": *
 #import "footnotes.typ" as footnotes
 
-#let recurse-columns(columns, key, default: auto, inherit: true) = {
-  // For every column
-  for child in columns {
-
-    // If it has children, recurse. If we should inherit, update the default.
-    if "children" in child {
-      recurse-columns(
-        child.children, 
+// Query is an array of key, value, and inherit
+#let recurse-columns(columns, queries) = {
+  for column in columns {
+    let queries = queries
+    for (key, query) in queries {
+      let default = query.at("default", default: none)
+      let value = query.at("value", default: default)
+      queries.at(key).value = column.at(
         key, 
-        inherit: inherit, 
-        default: {
-          if inherit {child.at(key, default: default)} else {default}
-        }
+        default: if (query.at("inherit", default: true)) {
+          value
+        } else {query.default}
       )
-      
-    } else {
+    }
 
-      // Bottom of rabbit hole: fetch the value (or default) and array join 
-      // everything together
-      (child.at(key, default: default),)
-      
+    if "children" in column {
+      recurse-columns(
+        column.children,
+        queries
+      )
+    } else {
+      (queries,)
     }
   }
 }
@@ -41,7 +42,7 @@
       // Header cells should be horizon aligned. Ideally it should default to `start`
       // but I've shadowed that variable.
       align: horizon + entry.at("align", default: left),
-      entry.display
+      entry.header
     ),)
 
     // If it has nested columns, build those too.
@@ -70,36 +71,6 @@
 
     // Keep track of which column we are in. This could be precalculated.
     start += entry.length
-  }
-}
-
-
-#let recurse-data(columns, data) = {
-  // For every column
-  for column in columns {
-    // Handle nested columns
-    if ("children" in column){
-      recurse-data(
-        column.children, 
-        // If the parent column has a key, lets assume that its not a mistake, and
-        // lets use this to slice the data before we pass it onto the child columns.
-        // If the key is missing, from the data, lets assume it has been removed from
-        // the data set
-        if ("key" in column){
-          data.at(column.key, default: (:))
-        } else {
-          data
-        }
-      )
-    } else { // Bottom of the rabbit hole
-      // Return the data, but if it doesn't exist, return empty content instead so
-      // we don't mess up our alignments
-      if "key" in column {
-        (data.at(column.key, default:  []),)
-      } else {
-        ([],)
-      }
-    }
   }
 }
 
@@ -140,6 +111,16 @@
   return (columns, max-depth, length)
 }
 
+#let data-from-key(dictionary, key, default: none) = {
+  if type(key) == str { key = key.split(".").rev()}
+  if (key.len() == 1){ return dictionary.at(key.last(), default: default) }
+  data-from-key(
+    dictionary.at(key.pop(), default: (:)), 
+    key, 
+    default: default
+  )
+}
+
 #let make(
   columns: (), 
   data: (), 
@@ -152,16 +133,27 @@
 ) = {
 
   let (columns, max-depth, length) = sanitize-input(columns, depth: 0)
+  let query-result = recurse-columns(columns, (
+    fill: (inherit: true, default: none),
+    align: (inherit: true, default: start),
+    gutter: (inherit: true, default: 0em),
+    width: (inherit: true, default: auto),
+    display: (inherit: true, default: none),
+    key: (inherit: false, default: ""),
+  ))
+  let row-display = query-result.map(it=>it.key.value).zip(
+    query-result.map(it=>it.display.value)
+  )
 
   set text(size: 9pt)
   set math.equation(numbering: none)
   
   footnotes.clear() + table(  // ADDED
     stroke: none,
-    fill: recurse-columns(columns, "fill", default: none),
-    align: recurse-columns(columns, "align", default: start),
-    column-gutter: recurse-columns(columns, "gutter", default: 0em),
-    columns: recurse-columns(columns, "width"),
+    fill: query-result.map(it=>it.fill.value),
+    align: query-result.map(it=>it.align.value),
+    column-gutter: query-result.map(it=>it.gutter.value),
+    columns: query-result.map(it=>it.width.value),
     table.header(
       table.hline(stroke: toprule),
       ..build-header(columns, max-depth: max-depth),
@@ -170,7 +162,11 @@
     ..args,
     ..(
       for entry in data{ 
-        recurse-data(columns, entry)
+        row-display.map( ((key, display))=>{
+          let data = data-from-key(entry, key, default: none)
+          if ((display) == none) {return data}
+          display(data)
+        })
         if hline != none {(hline,)}
       }
     ),
